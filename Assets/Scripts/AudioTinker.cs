@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-//using NaughtyAttributes;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -10,24 +9,26 @@ using UnityEditor;
 
 public class AudioTinker : MonoBehaviour {
     private AudioSource audioSource;
-    private AudioClip outAudioClip;
+    private AudioClip[] outAudioClip;
     
     
     // Start is called before the first frame update
     void Start() {
         audioSource = GetComponent<AudioSource>();
+        
         // Play generated puretone
         //outAudioClip = CreateToneAudioClip(1500);
-        string audioPath = "Audio/ChopSuey!";
-        outAudioClip = Resources.Load<AudioClip>(audioPath);
 
-        PlayOutAudio();
+        string audioPath = "Audio";
+        outAudioClip = Resources.LoadAll<AudioClip>(audioPath);
+
+        PlayOutAudio(0);
     }
     
 
     // Public APIs
-    public void PlayOutAudio() {
-        audioSource.PlayOneShot(outAudioClip);    
+    public void PlayOutAudio(int index) {
+        audioSource.PlayOneShot(outAudioClip[index]);    
     }
 
 
@@ -56,13 +57,4 @@ public class AudioTinker : MonoBehaviour {
         return audioClip;
     }
 
-    
-// #if UNITY_EDITOR
-//     [Button("Save Wav file")]
-//     private void SaveWavFile() {
-//         string path = EditorUtility.SaveFilePanel("Where do you want the wav file to go?", "", "", "wav");
-//         var audioClip = CreateToneAudioClip(1500);
-//         SaveWavUtil.Save(path, audioClip);
-//     }
-// #endif
 }
