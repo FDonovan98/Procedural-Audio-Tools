@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class AudioTinker : MonoBehaviour {
     private AudioSource audioSource;
-    private AudioClip[] outAudioClip;
+    private AudioClip outAudioClip;
     
     
     // Start is called before the first frame update
@@ -17,18 +17,19 @@ public class AudioTinker : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         
         // Play generated puretone
-        //outAudioClip = CreateToneAudioClip(1500);
+        outAudioClip = CreateToneAudioClip(1500);
 
-        string audioPath = "Audio";
-        outAudioClip = Resources.LoadAll<AudioClip>(audioPath);
+        // Load any audio tracks saved in Resources/Audio
+        // string audioPath = "Audio";
+        // AudioClip[] savedAudioClip = Resources.LoadAll<AudioClip>(audioPath);
 
-        PlayOutAudio(0);
+        PlayOutAudio();
     }
     
 
     // Public APIs
-    public void PlayOutAudio(int index) {
-        audioSource.PlayOneShot(outAudioClip[index]);    
+    public void PlayOutAudio() {
+        audioSource.PlayOneShot(outAudioClip);    
     }
 
 
