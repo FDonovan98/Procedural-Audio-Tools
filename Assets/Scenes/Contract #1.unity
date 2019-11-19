@@ -560,7 +560,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f322e26150c6c30448742877b1f619b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frequency: 1000
   sampleDurationSecs: 2
   sampleRate: 44100
   tones:
@@ -607,7 +606,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1501204753}
-        m_MethodName: PlayTone
+        m_MethodName: CoinPickupTone
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

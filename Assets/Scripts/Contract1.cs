@@ -5,9 +5,7 @@ using UnityEngine;
 public class Contract1 : MonoBehaviour
 {
     [SerializeField]
-    private int frequency;
-    [SerializeField]
-    private int sampleDurationSecs;
+    private float sampleDurationSecs;
     [SerializeField]
     private int sampleRate;
 
@@ -24,9 +22,18 @@ public class Contract1 : MonoBehaviour
         audioSource.PlayOneShot(outAudioClip);
     }
 
+    public void CoinPickupTone()
+    {
+        tones = new float[2];
+        tones[0] = Random.Range(1000, 1200);
+        tones[1] = tones[0] * 1.5f;
+        sampleDurationSecs = 0.5f;
+        PlayTone();
+    }
+
     private AudioClip CreateToneAudioClip(float[] frequency)
     {
-        int sampleLength = sampleRate * sampleDurationSecs * frequency.Length;
+        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * frequency.Length);
         float maxValue = 1f / 4f;
 
         var audioClip = AudioClip.Create("tone", sampleLength, 1, sampleRate, false);
