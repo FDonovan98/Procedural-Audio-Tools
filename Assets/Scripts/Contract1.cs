@@ -11,32 +11,46 @@ public class Contract1 : MonoBehaviour
     [SerializeField]
     private int sampleRate;
 
+    [SerializeField]
+    private float[] tones;
+
     private AudioSource audioSource;
     private AudioClip outAudioClip;
 
     public void PlayTone()
     {
         audioSource = GetComponent<AudioSource>();
-        outAudioClip = CreateToneAudioClip();
+        outAudioClip = CreateToneAudioClip(tones);
         audioSource.PlayOneShot(outAudioClip);
     }
 
-    private AudioClip CreateToneAudioClip()
+    private AudioClip CreateToneAudioClip(float[] frequency)
     {
-        int sampleLength = sampleRate * sampleDurationSecs;
+        int sampleLength = sampleRate * sampleDurationSecs * frequency.Length;
         float maxValue = 1f / 4f;
 
         var audioClip = AudioClip.Create("tone", sampleLength, 1, sampleRate, false);
 
-        float[] samples = new float[sampleLength];
-        for (var i = 0; i < sampleLength; i++)
+        List<float> samples = new List<float>(sampleLength);
+
+        for (int i = 0; i < frequency.Length; i++)
         {
-            float s = Mathf.Sin(2.0f * Mathf.PI * frequency * ((float)i / (float)sampleRate));
-            float v = s * maxValue;
-            samples[i] = v;
+            for (var j = 0; j < sampleRate * frequency.Length; j++)
+            {
+                float s = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * ((float)j / (float)sampleRate));
+                float v = s * maxValue;
+                samples.Add(v);
+            }
         }
 
-        audioClip.SetData(samples, 0);
+        float[] tonesToPlay = new float[samples.Count];
+
+        for (int s = 0; s < samples.Count; s++)
+        {
+            tonesToPlay[s] = samples[s];
+        }
+        
+        audioClip.SetData(tonesToPlay, 0);
         return audioClip;
     }
 }
