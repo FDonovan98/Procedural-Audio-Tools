@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
+using UnityEngine.UI;
 
 public class ToneEditor : EditorWindow
 {
@@ -9,6 +10,8 @@ public class ToneEditor : EditorWindow
     int samplerate = 44100;
     int sampleFrequency = 440;
     string sampleName;
+    AudioClip audioClip;
+
     
     [MenuItem("Window/Tone Editor")]
     public static void ShowWindow()
@@ -22,15 +25,18 @@ public class ToneEditor : EditorWindow
         sampleFrequency = EditorGUILayout.IntField("Sample Frequency", sampleFrequency);
         sampleDuration = EditorGUILayout.FloatField("Sample Duration", sampleDuration);
         samplerate = EditorGUILayout.IntField("Sample Rate", samplerate);
+        audioClip = (AudioClip)EditorGUILayout.ObjectField("Audio Clip", audioClip, typeof(AudioClip), true);
 
         if (GUILayout.Button("Play Tone"))
         {
-            PlayAudio();
+            audioClip = GenerateTone();
+            PlayAudio(audioClip);
         }
 
         if (GUILayout.Button("Save Tone"))
         {
-            SaveTone();
+            audioClip = GenerateTone();
+            SaveTone(audioClip);
         }
 
         if (GUILayout.Button("Assign Current Tone To Selected Buttons"))
@@ -39,9 +45,21 @@ public class ToneEditor : EditorWindow
         }
     }
 
-    private void SaveTone()
-    {
-        AudioClip audioClip = GenerateTone();
+    // private void AssignToneToButtons()
+    // {
+    //     SaveTone();
+    //     foreach (GameObject obj in Selection.gameObjects)
+    //     {
+    //         Button button = obj.GetComponent<Button>();
+    //         if (button != null)
+    //         {
+    //             button.onClick.AddListener(() => {})
+    //         }
+    //     }
+    // }
+
+    private void SaveTone(AudioClip audioClip)
+    {  
         CreateFileStructure();
         AssetDatabase.CreateAsset(audioClip, "Assets/Sounds/" + sampleName);
     }
@@ -55,9 +73,8 @@ public class ToneEditor : EditorWindow
         
     }
 
-    private void PlayAudio()
+    private void PlayAudio(AudioClip audioClip)
     {
-        AudioClip audioClip = GenerateTone();
         GameObject audioHolder = Instantiate(new GameObject());
         AudioSource audioSource = audioHolder.AddComponent<AudioSource>();
         audioSource.clip = audioClip;
