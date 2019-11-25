@@ -14,6 +14,8 @@ public class ToneEditor : EditorWindow
     AudioClip audioClip;
     bool inflection = false;
     int readCounter;
+    GameObject audioHolder = null;
+    AudioSource audioSource;
 
     
     [MenuItem("Window/Tone Editor")]
@@ -83,8 +85,12 @@ public class ToneEditor : EditorWindow
 
     private void PlayAudio(AudioClip audioClip)
     {
-        GameObject audioHolder = new GameObject();
-        AudioSource audioSource = audioHolder.AddComponent<AudioSource>();
+        if (audioHolder == null)
+        {
+            audioHolder = new GameObject();
+            audioSource = audioHolder.AddComponent<AudioSource>();
+        }
+         
         audioSource.clip = audioClip;
         audioSource.Play();        
     }
@@ -93,6 +99,8 @@ public class ToneEditor : EditorWindow
     {
         readCounter = 0;
         AudioClip audioClip = AudioClip.Create(sampleName, (int)(samplerate * sampleDuration), 1, samplerate, false, OnAudioRead, OnAudioSetPosition);
+
+        Debug.Log(readCounter);
 
         return audioClip;
     }
@@ -104,7 +112,7 @@ public class ToneEditor : EditorWindow
         readCounter++;
         while (count < data.Length)
         {
-            currentFreq = Mathf.Lerp(sampleFrequency, endFrequency, (float)readCounter / 17f);
+            currentFreq = Mathf.Lerp(sampleFrequency, endFrequency, (float)readCounter / (1 + 10 * sampleDuration)); 
             data[count] = Mathf.Sin(2 * Mathf.PI * currentFreq * pos / samplerate);
             pos++;
             count++;
