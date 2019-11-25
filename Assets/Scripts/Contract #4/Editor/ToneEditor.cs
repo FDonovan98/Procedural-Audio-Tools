@@ -12,7 +12,7 @@ public class ToneEditor : EditorWindow
     [MenuItem("Window/Tone Editor")]
     public static void ShowWindow()
     {
-        GetWindow<ToneEditor>();
+        GetWindow<ToneEditor>("Tone Editor");
     }
 
     void OnGUI()
