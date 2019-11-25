@@ -75,10 +75,10 @@ public class ToneEditor : EditorWindow
 
     private void PlayAudio(AudioClip audioClip)
     {
-        GameObject audioHolder = Instantiate(new GameObject());
+        GameObject audioHolder = new GameObject();
         AudioSource audioSource = audioHolder.AddComponent<AudioSource>();
         audioSource.clip = audioClip;
-        audioSource.Play();
+        audioSource.Play();        
     }
 
     private AudioClip GenerateTone()
