@@ -6,7 +6,7 @@ public class ToneEditor : EditorWindow
     int pos = 0;
     float sampleDuration = 1.5f;
     int samplerate = 44100;
-    int frequency = 440;
+    int sampleFrequency = 440;
     string sampleName;
     
     [MenuItem("Window/Tone Editor")]
@@ -17,9 +17,19 @@ public class ToneEditor : EditorWindow
 
     void OnGUI()
     {
-        if (GUILayout.Button("Press me"))
+        sampleName = EditorGUILayout.TextField("Sample Name", sampleName);
+        sampleFrequency = EditorGUILayout.IntField("Sample Frequency", sampleFrequency);
+        sampleDuration = EditorGUILayout.FloatField("Sample Duration", sampleDuration);
+        samplerate = EditorGUILayout.IntField("Sample Rate", samplerate);
+
+        if (GUILayout.Button("Play Tone"))
         {
             PlayAudio();
+        }
+
+        if (GUILayout.Button("Save Tone"))
+        {
+            Debug.Log("This feature is not yet implemented");
         }
     }
 
@@ -44,7 +54,7 @@ public class ToneEditor : EditorWindow
         int count = 0;
         while (count < data.Length)
         {
-            data[count] = Mathf.Sin(2 * Mathf.PI * frequency * pos / samplerate);
+            data[count] = Mathf.Sin(2 * Mathf.PI * sampleFrequency * pos / samplerate);
             pos++;
             count++;
         }
