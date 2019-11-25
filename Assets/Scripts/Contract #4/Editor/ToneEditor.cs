@@ -29,8 +29,25 @@ public class ToneEditor : EditorWindow
 
         if (GUILayout.Button("Save Tone"))
         {
+            SaveTone();
+        }
+
+        if (GUILayout.Button("Assign Current Tone To Selected Buttons"))
+        {
             Debug.Log("This feature is not yet implemented");
         }
+    }
+
+    private void SaveTone()
+    {
+        AudioClip audioClip = GenerateTone();
+        CreateFileStructure();
+        AssetDatabase.CreateAsset(audioClip, "Assets/Sounds/" + sampleName);
+    }
+
+    private void CreateFileStructure()
+    {
+        AssetDatabase.CreateFolder("Assets", "Sounds");
     }
 
     private void PlayAudio()
