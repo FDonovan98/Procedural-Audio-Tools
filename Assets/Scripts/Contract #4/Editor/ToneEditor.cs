@@ -3,11 +3,11 @@ using UnityEditor;
 
 public class ToneEditor : EditorWindow
 {
-    private int pos = 0;
-    public float sampleDuration = 1.5f;
-    public int samplerate = 44100;
-    public int frequency = 440;
-    public string sampleName;
+    int pos = 0;
+    float sampleDuration = 1.5f;
+    int samplerate = 44100;
+    int frequency = 440;
+    string sampleName;
     
     [MenuItem("Window/Tone Editor")]
     public static void ShowWindow()
@@ -25,10 +25,10 @@ public class ToneEditor : EditorWindow
 
     private void PlayAudio()
     {
-        AudioClip audioclip = GenerateTone();
+        AudioClip audioClip = GenerateTone();
         GameObject audioHolder = Instantiate(new GameObject());
         AudioSource audioSource = audioHolder.AddComponent<AudioSource>();
-        audioSource.clip = audioclip;
+        audioSource.clip = audioClip;
         audioSource.Play();
     }
 
