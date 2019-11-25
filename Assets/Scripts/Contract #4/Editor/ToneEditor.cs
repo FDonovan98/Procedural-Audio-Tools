@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-public class NewBehaviourScript : Editor
+public class ToneEditor : EditorWindow
 {
-    
+    [MenuItem("Window/Tone Editor")]
+    public static void ShowWindow()
+    {
+        GetWindow<ToneEditor>();
+    }
 }
