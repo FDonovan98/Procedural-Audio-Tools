@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class ToneEditor : EditorWindow
 {
-    private int pos;
+    private int pos = 0;
     public float sampleDuration = 1.5f;
     public int samplerate = 44100;
     public int frequency = 440;
@@ -17,7 +17,7 @@ public class ToneEditor : EditorWindow
 
     void OnGUI()
     {
-        GUILayout.Button("Press me")
+        if (GUILayout.Button("Press me"))
         {
             PlayAudio();
         }
