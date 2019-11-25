@@ -13,6 +13,7 @@ public class ToneEditor : EditorWindow
     string sampleName;
     AudioClip audioClip;
     bool inflection = false;
+    int readCounter;
 
     
     [MenuItem("Window/Tone Editor")]
@@ -90,7 +91,8 @@ public class ToneEditor : EditorWindow
 
     private AudioClip GenerateTone()
     {
-        AudioClip audioClip = AudioClip.Create(sampleName, (int)(samplerate * sampleDuration), 1, samplerate, true, OnAudioRead, OnAudioSetPosition);
+        readCounter = 0;
+        AudioClip audioClip = AudioClip.Create(sampleName, (int)(samplerate * sampleDuration), 1, samplerate, false, OnAudioRead, OnAudioSetPosition);
 
         return audioClip;
     }
@@ -98,9 +100,12 @@ public class ToneEditor : EditorWindow
     void OnAudioRead(float[] data)
     {
         int count = 0;
+        float currentFreq;
+        readCounter++;
         while (count < data.Length)
         {
-            data[count] = Mathf.Sin(2 * Mathf.PI * sampleFrequency * pos / samplerate);
+            currentFreq = Mathf.Lerp(sampleFrequency, endFrequency, (float)readCounter / 17f);
+            data[count] = Mathf.Sin(2 * Mathf.PI * currentFreq * pos / samplerate);
             pos++;
             count++;
         }
