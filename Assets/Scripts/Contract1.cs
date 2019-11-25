@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Contract1 : MonoBehaviour
 {
-    [SerializeField]
     private float sampleDurationSecs;
     [SerializeField]
     private int sampleRate;
+    private float totalTime;
 
     [SerializeField]
     private float[] tones;
@@ -27,13 +27,19 @@ public class Contract1 : MonoBehaviour
         tones = new float[2];
         tones[0] = Random.Range(1000, 1200);
         tones[1] = tones[0] * 1.5f;
-        sampleDurationSecs = 0.5f;
+        sampleDurationSecs = 1f;
         PlayTone();
     }
 
     private AudioClip CreateToneAudioClip(float[] frequency)
     {
-        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * frequency.Length);
+        totalTime = 0;
+        sampleDurationSecs = 60.0f;
+        foreach (int freq in frequency)
+        {
+            totalTime += sampleDurationSecs * freq;
+        }
+        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * totalTime);
         float maxValue = 1f / 4f;
 
         var audioClip = AudioClip.Create("tone", sampleLength, 1, sampleRate, false);
@@ -42,7 +48,7 @@ public class Contract1 : MonoBehaviour
 
         for (int i = 0; i < frequency.Length; i++)
         {
-            for (var j = 0; j < sampleRate * frequency.Length; j++)
+            for (var j = 0; j < sampleRate * frequency[i]; j++)
             {
                 float s = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * ((float)j / (float)sampleRate));
                 float v = s * maxValue;

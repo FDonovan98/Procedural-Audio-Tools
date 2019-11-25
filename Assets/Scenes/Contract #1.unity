@@ -560,11 +560,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f322e26150c6c30448742877b1f619b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sampleDurationSecs: 2
   sampleRate: 44100
+  tempo: 30
   tones:
   - 1000
-  - 2000
+  - 1000
 --- !u!114 &1501204754
 MonoBehaviour:
   m_ObjectHideFlags: 0
