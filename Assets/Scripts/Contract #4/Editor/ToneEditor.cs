@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 public class ToneEditor : EditorWindow
 {
@@ -47,7 +48,11 @@ public class ToneEditor : EditorWindow
 
     private void CreateFileStructure()
     {
-        AssetDatabase.CreateFolder("Assets", "Sounds");
+        if (!Directory.Exists("Assets/Sounds"))
+        {
+            AssetDatabase.CreateFolder("Assets", "Sounds");
+        }
+        
     }
 
     private void PlayAudio()
