@@ -9,8 +9,10 @@ public class ToneEditor : EditorWindow
     float sampleDuration = 1.5f;
     int samplerate = 44100;
     int sampleFrequency = 440;
+    int endFrequency;
     string sampleName;
     AudioClip audioClip;
+    bool inflection = false;
 
     
     [MenuItem("Window/Tone Editor")]
@@ -23,6 +25,11 @@ public class ToneEditor : EditorWindow
     {
         sampleName = EditorGUILayout.TextField("Sample Name", sampleName);
         sampleFrequency = EditorGUILayout.IntField("Sample Frequency", sampleFrequency);
+        inflection = EditorGUILayout.Toggle("Inflection", inflection);
+        if (inflection)
+        {
+            endFrequency = EditorGUILayout.IntField("End Frequency", endFrequency);
+        }
         sampleDuration = EditorGUILayout.FloatField("Sample Duration", sampleDuration);
         samplerate = EditorGUILayout.IntField("Sample Rate", samplerate);
         audioClip = (AudioClip)EditorGUILayout.ObjectField("Audio Clip", audioClip, typeof(AudioClip), true);
