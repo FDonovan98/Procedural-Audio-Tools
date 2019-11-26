@@ -61,6 +61,10 @@ public class ToneEditor : EditorWindow
         }
     }
 
+    void OnDestroy()
+    {
+        DestroyImmediate(audioHolder);
+    }
     // private void AssignToneToButtons()
     // {
     //     SaveTone();
