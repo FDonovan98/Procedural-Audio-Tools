@@ -119,7 +119,15 @@ public class ToneEditor : EditorWindow
         readCounter++;
         while (count < data.Length)
         {
-            currentFreq = Mathf.Lerp(sampleFrequency, endFrequency, (float)readCounter / (1 + 10 * sampleDuration)); 
+            if (inflection)
+            {
+                currentFreq = Mathf.Lerp(sampleFrequency, endFrequency, (float)readCounter / (1 + 10 * sampleDuration)); 
+            }
+            else
+            {
+                currentFreq = sampleFrequency;
+            }
+            
             data[count] = Mathf.Sin(2 * Mathf.PI * currentFreq * pos / samplerate);
             pos++;
             count++;
