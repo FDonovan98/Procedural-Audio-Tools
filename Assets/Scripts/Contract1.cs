@@ -83,6 +83,7 @@ public class Contract1 : MonoBehaviour
         }
 
         // Creates an array with the same data as the sample list
+        // Since AudioClip.SetData requires an array
         float[] tonesToPlay = new float[samples.Count];
         tonesToPlay = samples.ToArray();
 
