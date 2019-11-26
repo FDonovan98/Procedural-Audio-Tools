@@ -106,8 +106,6 @@ public class ToneEditor : EditorWindow
         readCounter = 0;
         AudioClip audioClip = AudioClip.Create(sampleName, (int)(samplerate * sampleDuration), 1, samplerate, false, OnAudioRead, OnAudioSetPosition);
 
-        Debug.Log(readCounter);
-
         return audioClip;
     }
 
