@@ -1,4 +1,10 @@
-﻿using UnityEngine;
+﻿/*
+Author: Harry Donovan
+Link To Repository: https://github.com/HDonovan96/Procedural-Audio-Tools
+License: MIT
+*/
+
+using UnityEngine;
 using UnityEditor;
 using System.IO;
 using UnityEngine.UI;
