@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Code written by James Berry with help from Daniel Neale(https://github.com/DanielNeale) because he knows how music works
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
