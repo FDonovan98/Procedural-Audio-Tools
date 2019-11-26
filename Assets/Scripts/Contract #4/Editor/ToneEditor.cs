@@ -12,11 +12,11 @@ using UnityEngine.UI;
 public class ToneEditor : EditorWindow
 {
     int pos = 0;
-    float sampleDuration = 1.5f;
+    float sampleDuration = 1.0f;
     int samplerate = 44100;
     int sampleFrequency = 440;
     int endFrequency;
-    string sampleName;
+    string sampleName = "Default";
     AudioClip audioClip;
     bool inflection = false;
     int readCounter;
@@ -74,14 +74,17 @@ public class ToneEditor : EditorWindow
     //     }
     // }
 
+    // Creates the file structure then saves the current audio sample.
     private void SaveTone(AudioClip audioClip)
     {  
         CreateFileStructure();
-        AssetDatabase.CreateAsset(audioClip, "Assets/Sounds/" + sampleName);
+        SaveWavUtil.Save(sampleName, audioClip);
     }
 
+    // Creates a folder to save any audio clips in.
     private void CreateFileStructure()
     {
+        // If the folder 'Assets/Sound' doesn't already exist it is created.
         if (!Directory.Exists("Assets/Sounds"))
         {
             AssetDatabase.CreateFolder("Assets", "Sounds");
