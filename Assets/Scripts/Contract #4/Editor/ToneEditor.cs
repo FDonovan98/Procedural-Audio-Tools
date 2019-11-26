@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using UnityEngine.UI;
+using UnityEditor.Events;
+using UnityEngine.Events;
 
 public class ToneEditor : EditorWindow
 {
@@ -45,19 +47,20 @@ public class ToneEditor : EditorWindow
 
         if (GUILayout.Button("Play Tone"))
         {
-            audioClip = GenerateTone();
-            PlayAudio(audioClip);
+            GenerateTone();
+            PlayAudio();
         }
 
         if (GUILayout.Button("Save Tone"))
         {
-            audioClip = GenerateTone();
-            SaveTone(audioClip);
+            GenerateTone();
+            SaveTone();
         }
 
         if (GUILayout.Button("Assign Current Tone To Selected Buttons"))
         {
-            Debug.Log("This feature is not yet implemented");
+            GenerateTone();
+            AssignToneToButtons();
         }
     }
 
@@ -65,21 +68,40 @@ public class ToneEditor : EditorWindow
     {
         DestroyImmediate(audioHolder);
     }
-    // private void AssignToneToButtons()
-    // {
-    //     SaveTone();
-    //     foreach (GameObject obj in Selection.gameObjects)
-    //     {
-    //         Button button = obj.GetComponent<Button>();
-    //         if (button != null)
-    //         {
-    //             button.onClick.AddListener(() => {})
-    //         }
-    //     }
-    // }
+
+    private void AssignToneToButtons()
+    {
+        SaveTone();
+        foreach (GameObject obj in Selection.gameObjects)
+        {
+            Button button = obj.GetComponent<Button>();
+            if (button != null)
+            {
+                AudioSource objAudioSource;
+                if (obj.GetComponent<AudioSource>() == null)
+                {
+                    objAudioSource = obj.AddComponent<AudioSource>();
+                    objAudioSource.playOnAwake = false;
+                }
+                else
+                {
+                    objAudioSource = obj.GetComponent<AudioSource>();
+                }
+                objAudioSource.clip = Resources.Load<AudioClip>("Sounds/" + sampleName);
+
+                UnityEventTools.AddPersistentListener(button.onClick, objAudioSource.Play);
+
+            }
+        }
+    }
+
+    private void OnButtonPress()
+    {
+        Debug.Log("Cake");
+    }
 
     // Creates the file structure then saves the current audio sample.
-    private void SaveTone(AudioClip audioClip)
+    private void SaveTone()
     {  
         CreateFileStructure();
         SaveWavUtil.Save(sampleName, audioClip);
@@ -89,14 +111,17 @@ public class ToneEditor : EditorWindow
     private void CreateFileStructure()
     {
         // If the folder 'Assets/Sound' doesn't already exist it is created.
-        if (!Directory.Exists("Assets/Sounds"))
+        if (!Directory.Exists("Assets/Resources"))
         {
-            AssetDatabase.CreateFolder("Assets", "Sounds");
+            AssetDatabase.CreateFolder("Assets", "Resources");
         }
-        
+        if (!Directory.Exists("Assets/Resources/Sounds"))
+        {
+            AssetDatabase.CreateFolder("Assets/Resources", "Sounds");
+        }
     }
 
-    private void PlayAudio(AudioClip audioClip)
+    private void PlayAudio()
     {
         if (audioHolder == null)
         {
@@ -111,7 +136,7 @@ public class ToneEditor : EditorWindow
     private AudioClip GenerateTone()
     {
         readCounter = 0;
-        AudioClip audioClip = AudioClip.Create(sampleName, (int)(samplerate * sampleDuration), 1, samplerate, false, OnAudioRead, OnAudioSetPosition);
+        audioClip = AudioClip.Create(sampleName, (int)(samplerate * sampleDuration), 1, samplerate, false, OnAudioRead, OnAudioSetPosition);
 
         return audioClip;
     }
