@@ -8,7 +8,12 @@
 You are currently been tasked with creating a tool which will generate sound
 effects, these should consist of sequences of tone as well as sample manipulations. The sound effect should be clearly tied to an action the player makes in the game (e.g., picking up an item, attacking, walking over a trap, or so on).
 An element of procedurality is expected to vary the tones.
- 
+
+#### Usage
+##### Build
+Run the build then press the button
+##### Unity Project
+Open the project and then open the 'Contract 1' Scene. Run the project and then press the button
 
 ### Contract - 4, Ambient Platformers Audio Generation ,Harry Donovan
 
