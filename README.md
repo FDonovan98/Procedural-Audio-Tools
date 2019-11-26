@@ -1,4 +1,5 @@
 # COMP 120 - Tinkering Audio
+[Link to main repository just in case](https://github.com/HDonovan96/Procedural-Audio-Tools)
 
 ## Contracts
 
