@@ -560,8 +560,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f322e26150c6c30448742877b1f619b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sampleDurationSecs: 4
   sampleRate: 44100
-  tempo: 30
   tones:
   - 1000
   - 1000
@@ -667,7 +667,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.507
+  m_Volume: 0.135
   m_Pitch: 1
   Loop: 0
   Mute: 0

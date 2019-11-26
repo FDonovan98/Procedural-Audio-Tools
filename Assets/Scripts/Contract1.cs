@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Contract1 : MonoBehaviour
 {
+    [SerializeField]
     private float sampleDurationSecs;
     [SerializeField]
     private int sampleRate;
@@ -26,29 +27,23 @@ public class Contract1 : MonoBehaviour
     {
         tones = new float[2];
         tones[0] = Random.Range(1000, 1200);
-        tones[1] = tones[0] * 1.5f;
-        sampleDurationSecs = 1f;
+        tones[1] = tones[0] * 3f;        
         PlayTone();
     }
 
     private AudioClip CreateToneAudioClip(float[] frequency)
     {
         totalTime = 0;
-        sampleDurationSecs = 60.0f;
-        foreach (int freq in frequency)
-        {
-            totalTime += sampleDurationSecs * freq;
-        }
-        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * totalTime);
+        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * frequency.Length);
         float maxValue = 1f / 4f;
 
         var audioClip = AudioClip.Create("tone", sampleLength, 1, sampleRate, false);
 
-        List<float> samples = new List<float>(sampleLength);
+        List<float> samples = new List<float>();
 
         for (int i = 0; i < frequency.Length; i++)
         {
-            for (var j = 0; j < sampleRate * frequency[i]; j++)
+            for (var j = 0; j < sampleRate; j++)
             {
                 float s = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * ((float)j / (float)sampleRate));
                 float v = s * maxValue;
@@ -58,7 +53,7 @@ public class Contract1 : MonoBehaviour
 
         float[] tonesToPlay = new float[samples.Count];
 
-        for (int s = 0; s < samples.Count; s++)
+        for (int s = 0; s < tonesToPlay.Length; s++)
         {
             tonesToPlay[s] = samples[s];
         }
