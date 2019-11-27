@@ -12,10 +12,14 @@ public class Contract1 : MonoBehaviour
     // Samples per second
     [SerializeField]
     private int sampleRate;
+    // Volume multiplier (KEEP LOW TO KEEP EARS)
+    [Range(0.01f, 5f)]
+    public float volume;
 
     // Shows the tones played in the inspector (values change by code, altering them in inspector does nothing)
     [SerializeField]
     private float[] tones;
+    private List<float> samples;
 
     // Holds the component that plays the audio
     private AudioSource audioSource;
@@ -65,24 +69,12 @@ public class Contract1 : MonoBehaviour
     private AudioClip CreateToneAudioClip(float[] frequency)
     {
         // Computes length of sample
-        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * frequency.Length);
-        // Volume multiplier (KEEP LOW TO KEEP EARS)
-        float volume = .25f;
+        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * frequency.Length);  
 
         // List to hold the sample values
-        List<float> samples = new List<float>();
+        samples = new List<float>();
 
-        // Nested for loops find each point on a sound wave for each frequency parsed in
-        for (int i = 0; i < frequency.Length; i++)
-        {
-            for (int j = 0; j < sampleRate; j++)
-            {
-                // Finds the values of each point on the sine wave of each tone according to sample rate
-                float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * ((float)j / (float)sampleRate));
-                // Adjusts volume and adds it to the list of samples
-                samples.Add(pointOnWave * volume);
-            }
-        }
+        CreateSineWave(frequency, volume);
 
         // Creates an array with the same data as the sample list
         // Since AudioClip.SetData requires an array
@@ -93,5 +85,25 @@ public class Contract1 : MonoBehaviour
         AudioClip audioClip = AudioClip.Create("tone", sampleLength, 1, sampleRate, false);
         audioClip.SetData(tonesToPlay, 0);
         return audioClip;
+    }
+
+    /// <summary>
+    /// Adds to the "samples" list the sine wave of the frequencies input at the volume input
+    /// </summary>
+    /// <param name="frequency">Array of frequencies to create the sine wave from</param>
+    /// <param name="volume">Multiplicative variable to change the amplitude of the wave and therefore the volume</param>
+    private void CreateSineWave(float[] frequency, float volume)
+    {
+        for (int i = 0; i < frequency.Length; i++)
+        {
+            for (int j = 0; j < sampleRate; j++)
+            {
+                // Finds the values of each point on the sine wave of each tone according to sample rate
+                float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate));
+                // Adjusts volume and adds it to the list of samples
+                samples.Add(pointOnWave * volume);
+            }
+        }
+        return;
     }
 }
