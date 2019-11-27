@@ -79,9 +79,15 @@ public class Contract1 : MonoBehaviour
 
         // List to hold the sample values
         samples = new List<float>();
-
         CreateSineWave(frequency, volume, 1);
+        List<float> sineWave = samples;
+        samples = new List<float>();
         CreateSquareWave(frequency, volume, 1);
+        List<float> squareWave = samples;
+        for (int i = 0; i < sineWave.Count; i++)
+        {
+            samples[i] = sineWave[i] + squareWave[i];
+        }
 
         // Creates an array with the same data as the sample list
         // Since AudioClip.SetData requires an array
