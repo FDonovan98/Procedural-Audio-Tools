@@ -15,6 +15,12 @@ public class Contract1 : MonoBehaviour
     // Volume multiplier (KEEP LOW TO KEEP EARS)
     [Range(0.01f, 5f)]
     public float volume;
+    // Minimum value of the initial tone frequency
+    public int minRange;
+    // Maximum value of the initial tone frequency
+    public int maxRange;
+    // Temp value for multiplier between first and second frequency (FOR TESTING)
+    public float freqModifier;
 
     // Shows the tones played in the inspector (values change by code, altering them in inspector does nothing)
     [SerializeField]
@@ -55,8 +61,8 @@ public class Contract1 : MonoBehaviour
         //one is 3 times more than the other which is chosen
         //randomly. This is so that they are different enough
         //that I can tell that it's working properly
-        tones[0] = Random.Range(1000, 1200);
-        tones[1] = tones[0] * 3f;        
+        tones[0] = Random.Range(minRange, maxRange);
+        tones[1] = tones[0] * freqModifier;        
         PlayTone();
     }
 
@@ -75,6 +81,7 @@ public class Contract1 : MonoBehaviour
         samples = new List<float>();
 
         CreateSineWave(frequency, volume, 1);
+        CreateSquareWave(frequency, volume, 1);
 
         // Creates an array with the same data as the sample list
         // Since AudioClip.SetData requires an array
@@ -101,6 +108,27 @@ public class Contract1 : MonoBehaviour
             {
                 // Finds the values of each point on the sine wave of each tone according to sample rate
                 float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate));
+                // Adjusts volume and adds it to the list of samples
+                samples.Add(pointOnWave * volume);
+            }
+        }
+        return;
+    }
+
+    /// <summary>
+    /// Adds to the "samples" list the square waveform of the frequencies input at the volume input
+    /// </summary>
+    /// <param name="frequency">Array of frequencies to create the square wave from</param>
+    /// <param name="volume">Multiplicative variable to change the amplitude of the wave and therefore the volume</param>
+    /// <param name="noteLength">Total length of the wave</param>
+    private void CreateSquareWave(float[] frequency, float volume, float noteLength)
+    {
+        for (int i = 0; i < frequency.Length; i++)
+        {
+            for (int j = 0; j < sampleRate * noteLength; j++)
+            {
+                // Finds the values of each point on the sine wave of each tone according to sample rate
+                float pointOnWave = Mathf.Sign(Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate)));
                 // Adjusts volume and adds it to the list of samples
                 samples.Add(pointOnWave * volume);
             }
