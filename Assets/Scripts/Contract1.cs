@@ -74,7 +74,7 @@ public class Contract1 : MonoBehaviour
         // List to hold the sample values
         samples = new List<float>();
 
-        CreateSineWave(frequency, volume);
+        CreateSineWave(frequency, volume, 1);
 
         // Creates an array with the same data as the sample list
         // Since AudioClip.SetData requires an array
@@ -92,11 +92,12 @@ public class Contract1 : MonoBehaviour
     /// </summary>
     /// <param name="frequency">Array of frequencies to create the sine wave from</param>
     /// <param name="volume">Multiplicative variable to change the amplitude of the wave and therefore the volume</param>
-    private void CreateSineWave(float[] frequency, float volume)
+    /// <param name="noteLength">Total length of the wave</param>
+    private void CreateSineWave(float[] frequency, float volume, float noteLength)
     {
         for (int i = 0; i < frequency.Length; i++)
         {
-            for (int j = 0; j < sampleRate; j++)
+            for (int j = 0; j < sampleRate * noteLength; j++)
             {
                 // Finds the values of each point on the sine wave of each tone according to sample rate
                 float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate));
