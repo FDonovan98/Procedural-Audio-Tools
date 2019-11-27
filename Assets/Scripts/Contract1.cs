@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class Contract1 : MonoBehaviour
 {
-    // How long each tone will play (currently not working)
-    [SerializeField]
-    private float sampleDurationSecs;
+    // Total length of the full audio clip
+    private float totalLength;
+    private int sampleLength;
     // Samples per second
     [SerializeField]
     private int sampleRate;
@@ -22,10 +22,18 @@ public class Contract1 : MonoBehaviour
     // Temp value for multiplier between first and second frequency (FOR TESTING)
     public float freqModifier;
 
-    // Shows the tones played in the inspector (values change by code, altering them in inspector does nothing)
+    // Total number of tones for each sound effect
+    private int coinToneCount = 3;
+    private int coinToneMin = 3000;
+    private int coinToneMax = 3600;
+
+    // Array of tones to play (just to see it in the inspector. Code will change it regardless of what the inspector says)
     [SerializeField]
     private float[] tones;
+    // Array of the lengths of the tones (also makes no difference with value changes in inspector)
+    private float[] toneLengths;
     private List<float> samples;
+    private List<float> newSamples;
 
     // Holds the component that plays the audio
     private AudioSource audioSource;
@@ -42,8 +50,8 @@ public class Contract1 : MonoBehaviour
     /// Gets a new tone and plays it
     /// </summary>
     public void PlayTone()
-    { 
-        outAudioClip = CreateToneAudioClip(tones);
+    {
+        outAudioClip = CreateToneAudioClip(tones, toneLengths);
         // Plays tone once
         audioSource.PlayOneShot(outAudioClip);
     }
@@ -54,15 +62,19 @@ public class Contract1 : MonoBehaviour
     /// </summary>
     public void CoinPickupTone()
     {
-        // Array of frequencies to parse into audio tones
-        tones = new float[2];
-        //For the sake of testing
-        //these frequencies are hardcoded such that
-        //one is 3 times more than the other which is chosen
-        //randomly. This is so that they are different enough
-        //that I can tell that it's working properly
-        tones[0] = Random.Range(minRange, maxRange);
-        tones[1] = tones[0] * freqModifier;        
+        totalLength = 0;
+        tones = new float[coinToneCount];
+        toneLengths = new float[coinToneCount];
+        tones[0] = Random.Range(coinToneMin, coinToneMax);
+        tones[1] = tones[0] * .8f;
+        tones[2] = tones[0] * 6.3f;
+        toneLengths[0] = .03f;
+        toneLengths[1] = .5f;
+        toneLengths[2] =  1f;
+        foreach (float time in toneLengths)
+        {
+            totalLength += time;
+        }
         PlayTone();
     }
 
@@ -72,21 +84,26 @@ public class Contract1 : MonoBehaviour
     /// </summary>
     /// <param name="frequency">Array of tones (as float values) to create a clip from</param>
     /// <returns>AudioClip containing a sequence of tones that can be played through the AudioSource</returns>
-    private AudioClip CreateToneAudioClip(float[] frequency)
+    private AudioClip CreateToneAudioClip(float[] frequency, float[] toneLengths)
     {
-        // Computes length of sample
-        int sampleLength = Mathf.RoundToInt(sampleRate * sampleDurationSecs * frequency.Length);  
-
-        // List to hold the sample values
         samples = new List<float>();
-        CreateSineWave(frequency, volume, 1);
-        List<float> sineWave = samples;
-        samples = new List<float>();
-        CreateSquareWave(frequency, volume, 1);
-        List<float> squareWave = samples;
-        for (int i = 0; i < sineWave.Count; i++)
+        for (int i = 0; i < frequency.Length; i++)
         {
-            samples[i] = sineWave[i] + squareWave[i];
+            print(i);
+            // Computes length of sample
+            sampleLength = Mathf.RoundToInt(sampleRate * totalLength);
+            // Resets list
+            newSamples = new List<float>();
+            CreateSineWave(frequency, volume, toneLengths[i]);
+            List<float> sineWave = newSamples;
+            newSamples = new List<float>();
+            CreateSquareWave(frequency, volume, toneLengths[i]);
+            List<float> squareWave = newSamples;
+            for (int j = 0; j < newSamples.Count; j++)
+            {
+                newSamples[j] = sineWave[j] + squareWave[j];
+                samples.Add(newSamples[j]);
+            }
         }
 
         // Creates an array with the same data as the sample list
@@ -115,7 +132,7 @@ public class Contract1 : MonoBehaviour
                 // Finds the values of each point on the sine wave of each tone according to sample rate
                 float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate));
                 // Adjusts volume and adds it to the list of samples
-                samples.Add(pointOnWave * volume);
+                newSamples.Add(pointOnWave * volume);
             }
         }
         return;
@@ -136,7 +153,7 @@ public class Contract1 : MonoBehaviour
                 // Finds the values of each point on the sine wave of each tone according to sample rate
                 float pointOnWave = Mathf.Sign(Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate)));
                 // Adjusts volume and adds it to the list of samples
-                samples.Add(pointOnWave * volume);
+                newSamples.Add(pointOnWave * volume);
             }
         }
         return;
