@@ -1,4 +1,8 @@
-﻿// Code written by James Berry with help from Daniel Neale(https://github.com/DanielNeale) because he knows how music works
+﻿/*
+ * Author: James Berry
+ * Link To Repository: https://github.com/HDonovan96/Procedural-Audio-Tools
+ * License: MIT
+ */
 
 using System.Collections;
 using System.Collections.Generic;
@@ -32,17 +36,19 @@ public class Contract1 : MonoBehaviour
     private float[] tones;
     // Array of the lengths of the tones (also makes no difference with value changes in inspector)
     private float[] toneLengths;
-    private List<float> outSamples;
 
+    // List to hold the lists of samples for joining
+    private List<List<float>> sampleSets;
+
+    // Lists to hold separate sample values before combining them into one output
     private List<float> sineSamples;
-    private List<float> cosSamples;
-    private List<float> tanSamples;
     private List<float> squareSamples;
+
+    // The final list of samplles to be compiled into an audio clip
+     private List<float> outSamples;
 
     // Holds the component that plays the audio
     private AudioSource audioSource;
-    // Final audio tone sequence to play
-    private AudioClip outAudioClip;
 
     private void Awake()
     {
@@ -68,39 +74,48 @@ public class Contract1 : MonoBehaviour
         totalLength = 0;
         tones = new float[coinToneCount];
         toneLengths = new float[coinToneCount];
+
+        // Sets tone frequency values based on an inital random value
         tones[0] = Random.Range(coinToneMin, coinToneMax);
         tones[1] = tones[0] * .8f;
         tones[2] = tones[0] * .3f;
+
+        // Sets tone length values
         toneLengths[0] = .2f;
         toneLengths[1] = .5f;
         toneLengths[2] = .4f;
 
+        // Sums the total length of the audio clip
         foreach (float time in toneLengths)
         {
             totalLength += time;
         }
 
+        // Empties lists used
         outSamples = new List<float>();
         sineSamples = new List<float>();
         squareSamples = new List<float>();
+
         for (int i = 0; i < tones.Length; i++)
         {
             CreateSineWave(tones[i], volume, toneLengths[i]);
             CreateSquareWave(tones[i], volume, toneLengths[i]);
         }
-        for (int i = 0; i < sineSamples.Count; i++)
-        {
-            outSamples.Add(sineSamples[i] + squareSamples[i]);
-        }
+
+
+        sampleSets.Add(sineSamples);
+        sampleSets.Add(squareSamples);
+
+        JoinAudio(sampleSets);
+
         PlayTone(CreateToneAudioClip());
     }
 
 
     /// <summary>
-    /// Using an array input of tone frequencies, will create a sine wave pure tone
+    /// Creates an audioclip from the outSamples list
     /// </summary>
-    /// <param name="frequency">Array of tones (as float values) to create a clip from</param>
-    /// <returns>AudioClip containing a sequence of tones that can be played through the AudioSource</returns>
+    /// <returns>AudioClip</returns>
     private AudioClip CreateToneAudioClip()
     {
         // Computes length of sample
@@ -118,7 +133,7 @@ public class Contract1 : MonoBehaviour
     }
 
     /// <summary>
-    /// Adds to the "samples" list the sine wave of the frequencies input at the volume input
+    /// Adds to the "sineSamples" list the sine wave of the frequencies input at the volume input
     /// </summary>
     /// <param name="frequency">Array of frequencies to create the sine wave from</param>
     /// <param name="volume">Multiplicative variable to change the amplitude of the wave and therefore the volume</param>
@@ -135,7 +150,7 @@ public class Contract1 : MonoBehaviour
     }
 
     /// <summary>
-    /// Adds to the "samples" list the square waveform of the frequencies input at the volume input
+    /// Adds to the "squareSamples" list the square waveform of the frequencies input at the volume input
     /// </summary>
     /// <param name="frequency">Array of frequencies to create the square wave from</param>
     /// <param name="volume">Multiplicative variable to change the amplitude of the wave and therefore the volume</param>
@@ -151,8 +166,31 @@ public class Contract1 : MonoBehaviour
         }
     }
 
-    private void JoinAudio(List<List<float>> frequencies)
+    /// <summary>
+    /// Takes all lists in the toneLists parameter and sums them into one list
+    /// </summary>
+    /// <param name="toneLists">Lists of tones to sum</param>
+    private void JoinAudio(List<List<float>> toneLists)
     {
+        for (int i = 0; i < toneLists.Count; i++)
+        {
+            // Prevents setting values of a list that doesn't have a value
+            if (i == 0)
+            {
+                for (int j = 0; j < toneLists[i].Count; j++)
+                {
+                    outSamples.Add(toneLists[i][j]);
+                }
+            }
 
+            // Adds each individual value for the tones
+            else if (i != 0)
+            {
+                for (int j = 0; j < toneLists[i].Count; j++)
+                {
+                    outSamples[i] += toneLists[i][j];
+                }
+            }
+        }
     }
 }
