@@ -32,8 +32,12 @@ public class Contract1 : MonoBehaviour
     private float[] tones;
     // Array of the lengths of the tones (also makes no difference with value changes in inspector)
     private float[] toneLengths;
-    private List<float> samples;
-    private List<float> newSamples;
+    private List<float> outSamples;
+
+    private List<float> sineSamples;
+    private List<float> cosSamples;
+    private List<float> tanSamples;
+    private List<float> squareSamples;
 
     // Holds the component that plays the audio
     private AudioSource audioSource;
@@ -49,11 +53,10 @@ public class Contract1 : MonoBehaviour
     /// <summary>
     /// Gets a new tone and plays it
     /// </summary>
-    public void PlayTone()
+    public void PlayTone(AudioClip toPlay)
     {
-        outAudioClip = CreateToneAudioClip(tones, toneLengths);
         // Plays tone once
-        audioSource.PlayOneShot(outAudioClip);
+        audioSource.PlayOneShot(toPlay);
     }
 
     /// <summary>
@@ -67,15 +70,29 @@ public class Contract1 : MonoBehaviour
         toneLengths = new float[coinToneCount];
         tones[0] = Random.Range(coinToneMin, coinToneMax);
         tones[1] = tones[0] * .8f;
-        tones[2] = tones[0] * 6.3f;
-        toneLengths[0] = .03f;
+        tones[2] = tones[0] * .3f;
+        toneLengths[0] = .2f;
         toneLengths[1] = .5f;
-        toneLengths[2] =  1f;
+        toneLengths[2] = .4f;
+
         foreach (float time in toneLengths)
         {
             totalLength += time;
         }
-        PlayTone();
+
+        outSamples = new List<float>();
+        sineSamples = new List<float>();
+        squareSamples = new List<float>();
+        for (int i = 0; i < tones.Length; i++)
+        {
+            CreateSineWave(tones[i], volume, toneLengths[i]);
+            CreateSquareWave(tones[i], volume, toneLengths[i]);
+        }
+        for (int i = 0; i < sineSamples.Count; i++)
+        {
+            outSamples.Add(sineSamples[i] + squareSamples[i]);
+        }
+        PlayTone(CreateToneAudioClip());
     }
 
 
@@ -84,34 +101,16 @@ public class Contract1 : MonoBehaviour
     /// </summary>
     /// <param name="frequency">Array of tones (as float values) to create a clip from</param>
     /// <returns>AudioClip containing a sequence of tones that can be played through the AudioSource</returns>
-    private AudioClip CreateToneAudioClip(float[] frequency, float[] toneLengths)
+    private AudioClip CreateToneAudioClip()
     {
-        samples = new List<float>();
         // Computes length of sample
         sampleLength = Mathf.CeilToInt(sampleRate * totalLength);
-        for (int i = 0; i < frequency.Length; i++)
-        {           
-            // Resets list
-            newSamples = new List<float>();
-            CreateSineWave(frequency[i], volume, toneLengths[i]);
-            List<float> sineWave = newSamples;
-            newSamples = new List<float>();
-            CreateSquareWave(frequency[i], volume, toneLengths[i]);
-            List<float> squareWave = newSamples;
-            for (int j = 0; j < newSamples.Count; j++)
-            {
-                newSamples[j] = sineWave[j] + squareWave[j];
-                samples.Add(newSamples[j]);
-            }
-        }
 
         // Creates an array with the same data as the sample list
         // Since AudioClip.SetData requires an array
-        float[] tonesToPlay = new float[samples.Count];
-        tonesToPlay = samples.ToArray();
+        float[] tonesToPlay = new float[outSamples.Count];
+        tonesToPlay = outSamples.ToArray();
 
-        print(tonesToPlay.Length);
-        print(sampleLength);
         // Creates the AudioClip that will be returned
         AudioClip audioClip = AudioClip.Create("tone", sampleLength, 1, sampleRate, false);
         audioClip.SetData(tonesToPlay, 0);
@@ -131,7 +130,7 @@ public class Contract1 : MonoBehaviour
             // Finds the values of each point on the sine wave of each tone according to sample rate
             float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency * (j / noteLength));
             // Adjusts volume and adds it to the list of samples
-            newSamples.Add(pointOnWave * volume);
+            sineSamples.Add(pointOnWave * volume);
         }
     }
 
@@ -148,7 +147,12 @@ public class Contract1 : MonoBehaviour
             // Finds the values of each point on the sine wave of each tone according to sample rate
             float pointOnWave = Mathf.Sign(Mathf.Sin(2.0f * Mathf.PI * frequency * (j / noteLength)));
             // Adjusts volume and adds it to the list of samples
-            newSamples.Add(pointOnWave * volume);
+            squareSamples.Add(pointOnWave * volume);
         }
+    }
+
+    private void JoinAudio(List<List<float>> frequencies)
+    {
+
     }
 }
