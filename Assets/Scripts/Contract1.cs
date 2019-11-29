@@ -87,17 +87,16 @@ public class Contract1 : MonoBehaviour
     private AudioClip CreateToneAudioClip(float[] frequency, float[] toneLengths)
     {
         samples = new List<float>();
+        // Computes length of sample
+        sampleLength = Mathf.CeilToInt(sampleRate * totalLength);
         for (int i = 0; i < frequency.Length; i++)
-        {
-            print(i);
-            // Computes length of sample
-            sampleLength = Mathf.RoundToInt(sampleRate * totalLength);
+        {           
             // Resets list
             newSamples = new List<float>();
-            CreateSineWave(frequency, volume, toneLengths[i]);
+            CreateSineWave(frequency[i], volume, toneLengths[i]);
             List<float> sineWave = newSamples;
             newSamples = new List<float>();
-            CreateSquareWave(frequency, volume, toneLengths[i]);
+            CreateSquareWave(frequency[i], volume, toneLengths[i]);
             List<float> squareWave = newSamples;
             for (int j = 0; j < newSamples.Count; j++)
             {
@@ -111,6 +110,8 @@ public class Contract1 : MonoBehaviour
         float[] tonesToPlay = new float[samples.Count];
         tonesToPlay = samples.ToArray();
 
+        print(tonesToPlay.Length);
+        print(sampleLength);
         // Creates the AudioClip that will be returned
         AudioClip audioClip = AudioClip.Create("tone", sampleLength, 1, sampleRate, false);
         audioClip.SetData(tonesToPlay, 0);
@@ -123,19 +124,15 @@ public class Contract1 : MonoBehaviour
     /// <param name="frequency">Array of frequencies to create the sine wave from</param>
     /// <param name="volume">Multiplicative variable to change the amplitude of the wave and therefore the volume</param>
     /// <param name="noteLength">Total length of the wave</param>
-    private void CreateSineWave(float[] frequency, float volume, float noteLength)
+    private void CreateSineWave(float frequency, float volume, float noteLength)
     {
-        for (int i = 0; i < frequency.Length; i++)
+        for (int j = 0; j < sampleRate * noteLength; j++)
         {
-            for (int j = 0; j < sampleRate * noteLength; j++)
-            {
-                // Finds the values of each point on the sine wave of each tone according to sample rate
-                float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate));
-                // Adjusts volume and adds it to the list of samples
-                newSamples.Add(pointOnWave * volume);
-            }
+            // Finds the values of each point on the sine wave of each tone according to sample rate
+            float pointOnWave = Mathf.Sin(2.0f * Mathf.PI * frequency * (j / noteLength));
+            // Adjusts volume and adds it to the list of samples
+            newSamples.Add(pointOnWave * volume);
         }
-        return;
     }
 
     /// <summary>
@@ -144,18 +141,14 @@ public class Contract1 : MonoBehaviour
     /// <param name="frequency">Array of frequencies to create the square wave from</param>
     /// <param name="volume">Multiplicative variable to change the amplitude of the wave and therefore the volume</param>
     /// <param name="noteLength">Total length of the wave</param>
-    private void CreateSquareWave(float[] frequency, float volume, float noteLength)
+    private void CreateSquareWave(float frequency, float volume, float noteLength)
     {
-        for (int i = 0; i < frequency.Length; i++)
+        for (int j = 0; j < sampleRate * noteLength; j++)
         {
-            for (int j = 0; j < sampleRate * noteLength; j++)
-            {
-                // Finds the values of each point on the sine wave of each tone according to sample rate
-                float pointOnWave = Mathf.Sign(Mathf.Sin(2.0f * Mathf.PI * frequency[i] * (j / (float)sampleRate)));
-                // Adjusts volume and adds it to the list of samples
-                newSamples.Add(pointOnWave * volume);
-            }
+            // Finds the values of each point on the sine wave of each tone according to sample rate
+            float pointOnWave = Mathf.Sign(Mathf.Sin(2.0f * Mathf.PI * frequency * (j / noteLength)));
+            // Adjusts volume and adds it to the list of samples
+            newSamples.Add(pointOnWave * volume);
         }
-        return;
     }
 }
